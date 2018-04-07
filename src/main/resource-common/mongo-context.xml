@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+    <context:component-scan base-package="com.aosamesan" />
+    <context:property-placeholder location="classpath*:*.properties" trim-values="true"/>
+
+    <!-- Mongo DB -->
+    <bean id="mongoCredential" class="com.mongodb.MongoCredential">
+        <constructor-arg name="userName" value="${mongodb.user}" />
+        <constructor-arg name="password" value="${mongodb.password}" />
+        <constructor-arg name="source" value="${mongodb.database}" />
+        <constructor-arg name="mechanism" value="SCRAM_SHA_1" />
+    </bean>
+
+    <bean id="serverAddress" class="com.mongodb.ServerAddress">
+        <constructor-arg name="host" value="${mongodb.url}" />
+        <constructor-arg name="port" value="${mongodb.port}" />
+    </bean>
+
+    <bean id="mongoClient" class="com.mongodb.MongoClient">
+        <constructor-arg name="addr" ref="serverAddress" />
+        <constructor-arg name="credentialsList">
+            <util:list value-type="com.mongodb.MongoCredential">
+                <ref bean="mongoCredential" />
+            </util:list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="mongoDBFactory" class="org.springframework.data.mongodb.core.SimpleMongoDbFactory">
+        <constructor-arg name="mongoClient" ref="mongoClient" />
+        <constructor-arg name="databaseName" value="${mongodb.database}" />
+    </bean>
+
+    <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <constructor-arg name="mongoDbFactory" ref="mongoDBFactory" />
+    </bean>
+
+    <mongo:repositories base-package="com.aosamesan.repository" />
+    <mvc:annotation-driven />
+</beans>
