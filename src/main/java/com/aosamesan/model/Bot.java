@@ -1,4 +1,4 @@
-package com.aosamesan.web.model;
+package com.aosamesan.model;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;

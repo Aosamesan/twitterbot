@@ -1,6 +1,6 @@
-package com.aosamesan.web.controller;
+package com.aosamesan.controller;
 
-import com.aosamesan.web.model.Bot;
+import com.aosamesan.model.Bot;
 import com.aosamesan.service.MongoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,8 +17,6 @@ import java.util.List;
 @RequestMapping(path = "/")
 public class ManagerController {
     private MongoService mongoService;
-    @Value("${foo}")
-    private String foo;
 
     @Autowired
     public void setMongoService(MongoService mongoService) {
@@ -36,11 +34,5 @@ public class ManagerController {
     public String createBot(@RequestParam String botName, @RequestParam(required = false, defaultValue = "") String koreanBotName) {
         mongoService.createBot(botName, koreanBotName);
         return "redirect:/index";
-    }
-
-    @RequestMapping(path = "/test")
-    @ResponseBody
-    public String test() {
-        return foo;
     }
 }
